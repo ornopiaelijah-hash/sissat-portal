@@ -33,8 +33,12 @@ export function Sidebar() {
           "flex items-center gap-4 mb-2 group cursor-pointer p-2 -mx-2 rounded-lg transition-colors",
           isActive ? "bg-white/10" : "hover:bg-white/5"
         )}>
-          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 group-hover:border-secondary/50 transition-all shrink-0">
-            <User className="text-on-surface-variant group-hover:text-secondary" size={24} />
+          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 group-hover:border-secondary/50 transition-all shrink-0 overflow-hidden">
+            {profile.avatar ? (
+              <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <User className="text-on-surface-variant group-hover:text-secondary" size={24} />
+            )}
           </div>
           <div>
             <div className="text-on-surface font-bold text-sm group-hover:text-secondary transition-colors line-clamp-1">{profile.firstName} {profile.lastName}</div>

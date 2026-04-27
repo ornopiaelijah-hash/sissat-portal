@@ -5,7 +5,7 @@
 
 import { Course, Lecture, Deadline, Announcement, Submission, TranscriptEntry } from './types';
 
-export const LOGO_URL = 'https://southdale.edu.ph/wp-content/uploads/2021/08/Southdale-Logo-Circle.png';
+export const LOGO_URL = 'https://scontent.fcrk3-2.fna.fbcdn.net/v/t39.30808-6/435174027_936209608506496_6474096949489195287_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=1d70fc&_nc_eui2=AeHdu-RKuvnAKWcgjq4T33wf9HmFRBbIePD0eYVEFsh48BySZzcoiZdJInaiP7X4qQ1uPIcSGdgTSvPG2ZqqvpkV&_nc_ohc=Q4TWpGRFgHUQ7kNvwH-9WGO&_nc_oc=AdoRqFli7dGFQ4vzahvVCZlWJO0bRXR9AA7U71gg8ENvc0w5p7iQBJANh2non4Xl9cE&_nc_zt=23&_nc_ht=scontent.fcrk3-2.fna&_nc_gid=cB6Rr4ccL_deBBEUaa7ZLw&_nc_ss=7b2a8&oh=00_Af2GsgdMBWTz7qSsK_YP8MJFUM163AuWgoMF-51bYdn2ew&oe=69F54471';
 
 export const COURSES: Course[] = [
   {

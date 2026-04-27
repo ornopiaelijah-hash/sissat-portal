@@ -3,16 +3,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStudent } from '../context/StudentContext';
-import { User, Mail, Phone, Globe, GraduationCap, School, ShieldCheck, Save, Loader2, Edit3, X, Check, CheckCircle } from 'lucide-react';
+import { User, Mail, Phone, Globe, GraduationCap, School, ShieldCheck, Save, Loader2, Edit3, X, Check, CheckCircle, Camera } from 'lucide-react';
 import { LOGO_URL } from '../constants';
 
 export default function StudentProfile() {
   const { profile, updateProfile, isSaving, isLoadingData } = useStudent();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -20,7 +22,8 @@ export default function StudentProfile() {
     language: '',
     class: '',
     college: '',
-    studentId: ''
+    studentId: '',
+    avatar: ''
   });
 
   useEffect(() => {
@@ -32,10 +35,37 @@ export default function StudentProfile() {
         language: profile.language || '',
         class: profile.class || '',
         college: profile.college || '',
-        studentId: profile.studentId || ''
+        studentId: profile.studentId || '',
+        avatar: profile.avatar || ''
       });
+      setAvatarPreview(profile.avatar || null);
     }
   }, [profile]);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setAvatarPreview(base64String);
+        setFormData(prev => ({ ...prev, avatar: base64String }));
+        
+        // Auto-save the avatar even if not in "Edit Identity Details" mode
+        // if the user just wants to change the photo
+        if (!isEditing) {
+          updateProfile({ avatar: base64String });
+          setShowSuccess(true);
+          setTimeout(() => setShowSuccess(false), 3000);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSave = async () => {
     const success = await updateProfile(formData);
@@ -117,17 +147,30 @@ export default function StudentProfile() {
           <section className="bg-surface-container rounded-2xl p-1 border border-white/5 overflow-hidden">
             <div className="bg-primary-container rounded-xl p-8 velvet-depth flex flex-col items-center text-center">
               <div className="relative mb-6">
-                <div className="w-32 h-32 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center p-1 group">
-                  <div className="w-full h-full rounded-2xl bg-secondary/10 flex items-center justify-center overflow-hidden border border-secondary/20 transition-all duration-500 group-hover:scale-105">
-                     <img src={LOGO_URL} alt="" className="w-20 h-20 object-contain opacity-50 group-hover:opacity-100 transition-opacity" />
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleImageChange} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+                <div 
+                  className="w-32 h-32 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center p-1 group cursor-pointer relative overflow-hidden"
+                  onClick={handleImageClick}
+                >
+                  <div className="w-full h-full rounded-2xl bg-secondary/10 flex items-center justify-center overflow-hidden border border-secondary/20 transition-all duration-500 group-hover:scale-110">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt="Student Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <img src={LOGO_URL} alt="Default Logo Avatar" className="w-20 h-20 object-contain opacity-40 group-hover:opacity-100 transition-opacity" />
+                    )}
                   </div>
-                  {isEditing && (
-                    <div className="absolute inset-0 bg-primary/60 backdrop-blur-sm rounded-3xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                      <p className="text-[10px] font-bold text-white uppercase tracking-widest">Change Photo</p>
-                    </div>
-                  )}
+                  <div className="absolute inset-0 bg-primary/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center">
+                    <Camera size={24} className="text-secondary mb-2" />
+                    <p className="text-[10px] font-bold text-white uppercase tracking-widest text-center px-2">Update Photo</p>
+                  </div>
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary border-2 border-surface-container flex items-center justify-center shadow-2xl">
+                <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-xl bg-primary border-2 border-surface-container flex items-center justify-center shadow-2xl z-10">
                   <ShieldCheck size={20} className="text-secondary" />
                 </div>
               </div>

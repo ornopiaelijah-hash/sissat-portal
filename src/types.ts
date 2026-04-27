@@ -76,4 +76,5 @@ export interface StudentProfile {
   class: string;
   college: string;
   status: string;
+  avatar?: string;
 }
