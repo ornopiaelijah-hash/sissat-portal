@@ -21,7 +21,7 @@ export const COURSES: Course[] = [
   {
     id: '2',
     title: "3I's",
-    code: "3I'S",
+    code: "3IS",
     instructor: 'Dr. Marlou M. Tangaliin',
     category: 'Applied',
     description: 'Inquiries, Investigation, and Immersion: Developing critical thinking skills.',
@@ -157,56 +157,62 @@ export const SUBMISSIONS: Submission[] = [
 export const TRANSCRIPT: TranscriptEntry[] = [
   {
     id: '1',
+    studentId: '2024-SIS-001',
     module: 'Research 2',
     code: 'RES 2',
     instructor: 'Dr. Marlou M. Tangaliin',
     credits: 1.0,
     assessment: 'Paper & Defense',
-    grade: '94'
+    grade: '95'
   },
   {
     id: '2',
+    studentId: '2024-SIS-001',
     module: "3I's",
-    code: "3I'S",
+    code: "3IS",
     instructor: 'Dr. Marlou M. Tangaliin',
     credits: 1.0,
     assessment: 'Portfolio',
-    grade: '91'
+    grade: '92'
   },
   {
     id: '3',
+    studentId: '2024-SIS-001',
     module: 'Entrepreneurship',
     code: 'ENTREP',
     instructor: 'Mr. Jash Aiden Cortes III',
     credits: 1.0,
     assessment: 'Business Plan',
-    grade: '89'
+    grade: '88'
   },
   {
     id: '4',
+    studentId: '2024-SIS-001',
     module: 'CSS (NC II)',
     code: 'ICT-CSS',
     instructor: 'Mr. Joseph Peter Simeon',
     credits: 1.0,
     assessment: 'Practical Exam',
-    grade: '95'
+    grade: '98'
   },
   {
     id: '5',
+    studentId: '2024-SIS-001',
     module: 'HOPE',
     code: 'PE',
     instructor: 'Mr. Arbie Sadsad',
     credits: 1.0,
     assessment: 'Skills Test',
-    grade: '96'
+    grade: '90'
   },
   {
     id: '6',
+    studentId: '2024-SIS-001',
     module: 'Work Immersion',
     code: 'WI',
     instructor: 'Mr. Charles Faz Jr.',
     credits: 1.0,
     assessment: 'Final Report',
-    grade: '92'
+    grade: '96'
   }
 ];

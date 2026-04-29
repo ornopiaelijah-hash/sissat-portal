@@ -11,6 +11,9 @@ import Courses from './pages/Courses';
 import StudentProfile from './pages/StudentProfile';
 import Settings from './pages/Settings';
 import Schedule from './pages/Schedule';
+import GradeManagement from './pages/GradeManagement';
+import StudentGrades from './pages/StudentGrades';
+import RoleGuard from '@/components/RoleGuard';
 import { StudentProvider, useStudent } from './context/StudentContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -78,6 +81,15 @@ export default function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/profile" element={<StudentProfile />} />
+            <Route path="/academic-records" element={<StudentGrades />} />
+            <Route 
+              path="/grades" 
+              element={
+                <RoleGuard allowedRoles={['teacher', 'admin']}>
+                  <GradeManagement />
+                </RoleGuard>
+              } 
+            />
             <Route path="/settings" element={<Settings />} />
             <Route path="/schedule" element={<Schedule />} />
             <Route path="/admissions" element={<ComingSoon />} />

@@ -6,7 +6,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useStudent } from '../context/StudentContext';
-import { LayoutDashboard, Calendar, GraduationCap, BookOpen, UserCheck, Settings, LifeBuoy, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, Calendar, GraduationCap, BookOpen, UserCheck, Settings, LifeBuoy, LogOut, User, ClipboardList } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { LOGO_URL } from '../constants';
@@ -63,6 +63,34 @@ export function Sidebar() {
             <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">{item.label}</span>
           </NavLink>
         ))}
+        {profile.role === 'student' && (
+          <NavLink
+            to="/academic-records"
+            className={({ isActive }) => cn(
+              "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
+              isActive 
+                ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
+                : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+            )}
+          >
+            <BookOpen size={20} />
+            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Academic Records</span>
+          </NavLink>
+        )}
+        {(profile.role === 'admin' || profile.role === 'teacher') && (
+          <NavLink
+            to="/grades"
+            className={({ isActive }) => cn(
+              "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
+              isActive 
+                ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
+                : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+            )}
+          >
+            <ClipboardList size={20} />
+            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Grade Management</span>
+          </NavLink>
+        )}
       </nav>
 
       <div className="mt-auto px-6 pb-12 flex flex-col gap-4">

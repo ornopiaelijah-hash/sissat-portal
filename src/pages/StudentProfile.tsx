@@ -11,6 +11,7 @@ import { LOGO_URL } from '../constants';
 
 export default function StudentProfile() {
   const { profile, updateProfile, isSaving, isLoadingData } = useStudent();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);

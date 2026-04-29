@@ -18,6 +18,8 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [role, setRole] = useState<'student' | 'teacher' | 'admin'>('student');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -25,10 +27,29 @@ export default function Login() {
 
     const sanitizedEmail = email.trim().toLowerCase();
 
+    // Role-based password enforcement
+    const passwords = {
+      admin: 'sissat-admin26',
+      teacher: 'sissat-faculty26',
+      student: '3518'
+    };
+
+    if (password !== passwords[role]) {
+      setError(`Invalid ${role.charAt(0).toUpperCase() + role.slice(1)} Password`);
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const success = await login(sanitizedEmail, password);
+      // In a real app, the role would be fetched from DB. For this demo, 
+      // we pass it from the UI selection.
+      const success = await login(sanitizedEmail, password, role);
       if (success) {
-        navigate('/');
+        if (role === 'student') {
+          navigate('/');
+        } else {
+          navigate('/grades');
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Authorization failed. Please check your credentials.');
@@ -36,6 +57,12 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
+  const roles = [
+    { id: 'student', label: 'Student', icon: GraduationCap },
+    { id: 'teacher', label: 'Teacher', icon: Shield },
+    { id: 'admin', label: 'Admin', icon: Lock },
+  ] as const;
 
   return (
     <div className="min-h-screen bg-primary flex flex-col items-center justify-center p-6 relative overflow-hidden">
@@ -79,9 +106,38 @@ export default function Login() {
           </header>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-6">
+                <div>
+                  <label className="text-[10px] uppercase font-bold tracking-[0.2em] text-secondary mb-3 block">Access Protocol</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {roles.map((r) => {
+                      const Icon = r.icon;
+                      const isActive = role === r.id;
+                      return (
+                        <button
+                          key={r.id}
+                          type="button"
+                          onClick={() => setRole(r.id)}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-all duration-300 ${
+                            isActive 
+                              ? 'bg-secondary/10 border-secondary shadow-[0_0_15px_rgba(212,175,55,0.1)]' 
+                              : 'bg-primary/20 border-white/5 grayscale opacity-60 hover:opacity-100 hover:grayscale-0 hover:border-white/20'
+                          }`}
+                        >
+                          <Icon size={18} className={isActive ? 'text-secondary' : 'text-on-surface-variant'} />
+                          <span className={`text-[9px] font-black uppercase tracking-widest ${isActive ? 'text-secondary' : 'text-on-surface-variant'}`}>
+                            {r.label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div className="relative">
-                  <label className="text-[10px] uppercase font-bold tracking-[0.2em] text-secondary mb-2 block">Institutional Student ID</label>
+                  <label className="text-[10px] uppercase font-bold tracking-[0.2em] text-secondary mb-2 block">
+                    {role === 'student' ? 'Institutional Student ID' : role === 'teacher' ? 'Faculty Access Code' : 'Administrator Key'}
+                  </label>
                   <div className="relative group">
                     <GraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors" size={18} />
                     <input 
@@ -89,7 +145,7 @@ export default function Login() {
                       type="text"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="e.g. 3518"
+                      placeholder={role === 'student' ? 'e.g. 3518' : role === 'teacher' ? 'e.g. sissat-faculty26' : 'e.g. sissat-admin26'}
                       className="w-full bg-primary/50 border border-white/10 rounded-lg py-5 pl-12 pr-4 text-on-surface focus:outline-none focus:border-secondary transition-all placeholder:text-on-surface-variant/30 font-mono text-xl"
                     />
                   </div>

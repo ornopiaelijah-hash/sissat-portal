@@ -58,6 +58,7 @@ export interface Submission {
 
 export interface TranscriptEntry {
   id: string;
+  studentId: string;
   module: string;
   code: string;
   instructor: string;
@@ -77,4 +78,5 @@ export interface StudentProfile {
   college: string;
   status: string;
   avatar?: string;
+  role: 'student' | 'teacher' | 'admin';
 }
