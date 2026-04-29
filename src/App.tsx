@@ -12,6 +12,7 @@ import StudentProfile from './pages/StudentProfile';
 import Settings from './pages/Settings';
 import Schedule from './pages/Schedule';
 import GradeManagement from './pages/GradeManagement';
+import FacultyDashboard from './pages/FacultyDashboard';
 import StudentGrades from './pages/StudentGrades';
 import RoleGuard from '@/components/RoleGuard';
 import { StudentProvider, useStudent } from './context/StudentContext';
@@ -86,7 +87,7 @@ export default function App() {
               path="/grades" 
               element={
                 <RoleGuard allowedRoles={['teacher', 'admin']}>
-                  <GradeManagement />
+                  <FacultyDashboard />
                 </RoleGuard>
               } 
             />

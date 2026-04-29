@@ -157,7 +157,7 @@ export const SUBMISSIONS: Submission[] = [
 export const TRANSCRIPT: TranscriptEntry[] = [
   {
     id: '1',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: 'Research 2',
     code: 'RES 2',
     instructor: 'Dr. Marlou M. Tangaliin',
@@ -167,7 +167,7 @@ export const TRANSCRIPT: TranscriptEntry[] = [
   },
   {
     id: '2',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: "3I's",
     code: "3IS",
     instructor: 'Dr. Marlou M. Tangaliin',
@@ -177,7 +177,7 @@ export const TRANSCRIPT: TranscriptEntry[] = [
   },
   {
     id: '3',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: 'Entrepreneurship',
     code: 'ENTREP',
     instructor: 'Mr. Jash Aiden Cortes III',
@@ -187,7 +187,7 @@ export const TRANSCRIPT: TranscriptEntry[] = [
   },
   {
     id: '4',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: 'CSS (NC II)',
     code: 'ICT-CSS',
     instructor: 'Mr. Joseph Peter Simeon',
@@ -197,7 +197,7 @@ export const TRANSCRIPT: TranscriptEntry[] = [
   },
   {
     id: '5',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: 'HOPE',
     code: 'PE',
     instructor: 'Mr. Arbie Sadsad',
@@ -207,7 +207,7 @@ export const TRANSCRIPT: TranscriptEntry[] = [
   },
   {
     id: '6',
-    studentId: '2024-SIS-001',
+    studentId: '2026-SIS-001',
     module: 'Work Immersion',
     code: 'WI',
     instructor: 'Mr. Charles Faz Jr.',

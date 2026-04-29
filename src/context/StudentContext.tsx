@@ -28,7 +28,7 @@ const defaultProfile: StudentProfile = {
   email: 'elijahmiguel012207@gmail.com',
   phone: '0970-176-7945',
   language: 'English (US)',
-  studentId: '2024-SIS-001',
+  studentId: '2026-SIS-001',
   class: '12-JUPITER',
   college: 'TVL-ICT',
   status: 'Active Student',
@@ -36,17 +36,17 @@ const defaultProfile: StudentProfile = {
 };
 
 const mockStudents: StudentProfile[] = [
-  { firstName: 'John Carlo', lastName: 'Geronio', email: 'john@example.com', phone: '', language: 'English', studentId: '2024-SIS-002', class: '12-JUPITER', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
-  { firstName: 'Benjo Laurence', lastName: 'Silos', email: 'benjo@example.com', phone: '', language: 'English', studentId: '2024-SIS-003', class: '12-MARS', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
+  { firstName: 'John Carlo', lastName: 'Geronio', email: 'john@example.com', phone: '', language: 'English', studentId: '2026-SIS-002', class: '12-JUPITER', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
+  { firstName: 'Benjo Laurence', lastName: 'Silos', email: 'benjo@example.com', phone: '', language: 'English', studentId: '2026-SIS-003', class: '12-MARS', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
 ];
 
 const defaultGrades: TranscriptEntry[] = [
-  { id: '1', studentId: '2024-SIS-001', module: 'Research 2', code: 'RES 2', instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Paper & Defense', grade: '95' },
-  { id: '2', studentId: '2024-SIS-001', module: "3I's", code: "3IS", instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Portfolio', grade: '92' },
-  { id: '3', studentId: '2024-SIS-001', module: 'Entrepreneurship', code: 'ENTREP', instructor: 'Mr. Jash Aiden Cortes III', credits: 1.0, assessment: 'Business Plan', grade: '88' },
-  { id: '4', studentId: '2024-SIS-001', module: 'CSS (NC II)', code: 'ICT-CSS', instructor: 'Mr. Joseph Peter Simeon', credits: 1.0, assessment: 'Practical Exam', grade: '98' },
-  { id: '5', studentId: '2024-SIS-001', module: 'HOPE', code: 'PE', instructor: 'Mr. Arbie Sadsad', credits: 1.0, assessment: 'Skills Test', grade: '90' },
-  { id: '6', studentId: '2024-SIS-001', module: 'Work Immersion', code: 'WI', instructor: 'Mr. Charles Faz Jr.', credits: 1.0, assessment: 'Final Report', grade: '96' },
+  { id: '1', studentId: '2026-SIS-001', module: 'Research 2', code: 'RES 2', instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Paper & Defense', grade: '95' },
+  { id: '2', studentId: '2026-SIS-001', module: "3I's", code: "3IS", instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Portfolio', grade: '92' },
+  { id: '3', studentId: '2026-SIS-001', module: 'Entrepreneurship', code: 'ENTREP', instructor: 'Mr. Jash Aiden Cortes III', credits: 1.0, assessment: 'Business Plan', grade: '88' },
+  { id: '4', studentId: '2026-SIS-001', module: 'CSS (NC II)', code: 'ICT-CSS', instructor: 'Mr. Joseph Peter Simeon', credits: 1.0, assessment: 'Practical Exam', grade: '98' },
+  { id: '5', studentId: '2026-SIS-001', module: 'HOPE', code: 'PE', instructor: 'Mr. Arbie Sadsad', credits: 1.0, assessment: 'Skills Test', grade: '90' },
+  { id: '6', studentId: '2026-SIS-001', module: 'Work Immersion', code: 'WI', instructor: 'Mr. Charles Faz Jr.', credits: 1.0, assessment: 'Final Report', grade: '96' },
 ];
 
 const StudentContext = createContext<StudentContextType | undefined>(undefined);

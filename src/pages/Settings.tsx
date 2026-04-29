@@ -11,6 +11,8 @@ import { useStudent } from '../context/StudentContext';
 export default function Settings() {
   const { profile, logout } = useStudent();
 
+  const isFaculty = profile.role === 'teacher' || profile.role === 'admin';
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
@@ -23,7 +25,9 @@ export default function Settings() {
           <ChevronRight size={12} />
           <span className="text-secondary">Account Settings</span>
         </nav>
-        <h1 className="text-5xl md:text-6xl text-on-surface font-bold tracking-tight mb-4 font-headline">The Student Ledger</h1>
+        <h1 className="text-5xl md:text-6xl text-on-surface font-bold tracking-tight mb-4 font-headline">
+          {isFaculty ? 'Institutional Registry' : 'The Student Ledger'}
+        </h1>
         <p className="text-xl text-on-surface-variant max-w-2xl leading-relaxed italic">
           Manage your institutional identity, security protocols, and academic contact preferences within the Southdale International School ecosystem.
         </p>
@@ -36,30 +40,54 @@ export default function Settings() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-bl-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500" />
             <div className="relative z-10">
               <div className="w-24 h-24 rounded-xl mb-6 ring-2 ring-secondary/20 flex items-center justify-center bg-white/5 shadow-2xl">
-                <User className="text-secondary/60" size={48} />
+                {profile.role === 'admin' ? (
+                  <Shield className="text-secondary/60" size={48} />
+                ) : (
+                  <User className="text-secondary/60" size={48} />
+                )}
               </div>
-              <h2 className="text-2xl font-bold text-on-surface mb-1 font-headline">{profile.firstName} {profile.lastName}</h2>
-              <p className="text-secondary text-xs font-bold uppercase tracking-widest mb-6">{profile.college} • {profile.class}</p>
+              <h2 className="text-2xl font-bold text-on-surface mb-1 font-headline">
+                {profile.role === 'admin' ? 'System Administrator' : profile.role === 'teacher' ? 'Faculty Member' : `${profile.firstName} ${profile.lastName}`}
+              </h2>
+              <p className="text-secondary text-xs font-bold uppercase tracking-widest mb-6">
+                {profile.role === 'admin' ? 'Administrative Lead' : profile.role === 'teacher' ? 'Instructor' : `${profile.college} • ${profile.class}`}
+              </p>
               <div className="space-y-4 pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-on-surface-variant">Student ID</span>
-                  <span className="font-mono font-bold text-on-surface">{profile.studentId}</span>
-                </div>
+                {!isFaculty && (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-on-surface-variant">Student ID</span>
+                    <span className="font-mono font-bold text-on-surface">{profile.studentId}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-on-surface-variant">Department</span>
-                  <span className="font-bold text-on-surface">{profile.college}</span>
+                  <span className="font-bold text-on-surface">
+                    {isFaculty ? 'TVL - ICT' : profile.college}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="bg-surface-container p-2 rounded-xl flex flex-col gap-1 border border-white/5">
-            <button className="flex items-center justify-between w-full p-4 rounded-lg bg-secondary text-on-secondary shadow-lg font-bold uppercase text-[10px] tracking-widest">
-              Profile Details <ChevronRight size={14} />
-            </button>
-            <button className="flex items-center justify-between w-full p-4 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all text-[10px] font-bold uppercase tracking-widest">
-              Security & Privacy <ChevronRight size={14} />
-            </button>
+            {profile.role === 'admin' ? (
+              <div className="flex items-center justify-center w-full p-4 rounded-lg bg-secondary/10 border border-secondary/20 text-secondary shadow-lg font-black uppercase text-[10px] tracking-[0.2em]">
+                Admin Access Authorized
+              </div>
+            ) : profile.role === 'teacher' ? (
+              <div className="flex items-center justify-center w-full p-4 rounded-lg bg-secondary/10 border border-secondary/20 text-secondary shadow-lg font-black uppercase text-[10px] tracking-[0.2em]">
+                Faculty ID Verified
+              </div>
+            ) : (
+              <>
+                <button className="flex items-center justify-between w-full p-4 rounded-lg bg-secondary text-on-secondary shadow-lg font-bold uppercase text-[10px] tracking-widest">
+                  Profile Details <ChevronRight size={14} />
+                </button>
+                <button className="flex items-center justify-between w-full p-4 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all text-[10px] font-bold uppercase tracking-widest">
+                  Security & Privacy <ChevronRight size={14} />
+                </button>
+              </>
+            )}
             <button className="flex items-center justify-between w-full p-4 rounded-lg text-on-surface-variant hover:bg-white/5 transition-all text-[10px] font-bold uppercase tracking-widest">
               Notification Ledger <ChevronRight size={14} />
             </button>

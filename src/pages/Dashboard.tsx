@@ -106,8 +106,18 @@ export default function Dashboard() {
           <img src={LOGO_URL} alt="" className="w-96 h-96 grayscale" />
         </div>
         <div className="relative z-10">
-          <h1 className="text-4xl text-on-surface font-bold tracking-tight mb-2 font-headline">Welcome back, {profile.firstName}</h1>
-          <p className="text-on-surface-variant font-sans">{profile.college} • {profile.class}</p>
+          <h1 className="text-4xl text-on-surface font-bold tracking-tight mb-2 font-headline">
+            {profile.role === 'admin' ? 'System Console' : profile.role === 'teacher' ? 'Faculty Portal' : `Welcome back, ${profile.firstName}`}
+          </h1>
+          {profile.role === 'student' && (
+            <p className="text-on-surface-variant font-sans">{profile.college} • {profile.class}</p>
+          )}
+          {profile.role === 'teacher' && (
+            <p className="text-on-surface-variant font-sans font-medium italic">Welcome back, Instructor</p>
+          )}
+          {profile.role === 'admin' && (
+            <p className="text-on-surface-variant font-sans font-medium italic">Welcome back, System Administrator</p>
+          )}
         </div>
         <div className="hidden lg:flex items-center gap-3 bg-white/5 px-6 py-3 rounded-xl border border-white/10 relative z-10">
           <img src={LOGO_URL} className="w-8 h-8 object-contain" alt="Branding" />
@@ -121,10 +131,10 @@ export default function Dashboard() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl text-on-surface font-bold tracking-tight flex items-center gap-3 font-headline">
               <Calendar className="text-secondary" />
-              Today's Classes
+              {profile.role === 'admin' ? 'Recent Administrative Activity' : "Today's Classes"}
             </h2>
-            <Link to="/schedule" className="text-[10px] font-bold uppercase tracking-widest text-secondary hover:underline transition-colors">
-              Full Schedule
+            <Link to={profile.role === 'admin' ? '/grades' : '/schedule'} className="text-[10px] font-bold uppercase tracking-widest text-secondary hover:underline transition-colors">
+              {profile.role === 'admin' ? 'All Student Records' : 'Full Schedule'}
             </Link>
           </div>
 
@@ -172,13 +182,15 @@ export default function Dashboard() {
 
           <div className="bg-primary-container p-8 rounded-xl border border-secondary/10 hover:border-secondary/30 transition-all cursor-pointer group velvet-depth">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">Attendance Rate</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                {profile.role === 'admin' ? 'System Uptime' : 'Attendance Rate'}
+              </span>
             </div>
-            <div className="text-3xl font-headline text-on-surface mb-2">98.4%</div>
+            <div className="text-3xl font-headline text-on-surface mb-2">{profile.role === 'admin' ? '99.9%' : '98.4%'}</div>
             <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
               <motion.div 
                 initial={{ width: 0 }}
-                animate={{ width: '98.4%' }}
+                animate={{ width: profile.role === 'admin' ? '99.9%' : '98.4%' }}
                 transition={{ duration: 1, delay: 0.5 }}
                 className="h-full bg-secondary shadow-[0_0_10px_#775a19]" 
               />

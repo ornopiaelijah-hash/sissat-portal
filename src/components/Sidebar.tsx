@@ -19,7 +19,6 @@ const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
   { icon: Calendar, label: 'Schedule', to: '/schedule' },
   { icon: GraduationCap, label: 'Courses', to: '/courses' },
-  { icon: User, label: 'Student Profile', to: '/profile' },
   { icon: UserCheck, label: 'Admissions', to: '/admissions' },
   { icon: Settings, label: 'Settings', to: '/settings' },
 ];
@@ -34,15 +33,27 @@ export function Sidebar() {
           isActive ? "bg-white/10" : "hover:bg-white/5"
         )}>
           <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 group-hover:border-secondary/50 transition-all shrink-0 overflow-hidden">
-            {profile.avatar ? (
+            {profile.role === 'teacher' || profile.role === 'admin' ? (
+              <img src={LOGO_URL} alt="School" className="w-[80%] h-[80%] object-contain" />
+            ) : profile.avatar ? (
               <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               <User className="text-on-surface-variant group-hover:text-secondary" size={24} />
             )}
           </div>
           <div>
-            <div className="text-on-surface font-bold text-sm group-hover:text-secondary transition-colors line-clamp-1">{profile.firstName} {profile.lastName}</div>
-            <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">{profile.college} • {profile.class}</div>
+            <div className="text-on-surface font-bold text-sm group-hover:text-secondary transition-colors line-clamp-1">
+              {profile.role === 'admin' ? 'System Administrator' : profile.role === 'teacher' ? 'Faculty Member' : `${profile.firstName} ${profile.lastName}`}
+            </div>
+            {profile.role === 'student' && (
+              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">{profile.college} • {profile.class}</div>
+            )}
+            {profile.role === 'teacher' && (
+              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">Faculty Support Access</div>
+            )}
+            {profile.role === 'admin' && (
+              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">Institutional Management</div>
+            )}
           </div>
         </NavLink>
       </div>
@@ -64,18 +75,32 @@ export function Sidebar() {
           </NavLink>
         ))}
         {profile.role === 'student' && (
-          <NavLink
-            to="/academic-records"
-            className={({ isActive }) => cn(
-              "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
-              isActive 
-                ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
-                : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
-            )}
-          >
-            <BookOpen size={20} />
-            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Academic Records</span>
-          </NavLink>
+          <>
+            <NavLink
+              to="/profile"
+              className={({ isActive }) => cn(
+                "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
+                isActive 
+                  ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
+                  : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+              )}
+            >
+              <User size={20} />
+              <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Student Profile</span>
+            </NavLink>
+            <NavLink
+              to="/academic-records"
+              className={({ isActive }) => cn(
+                "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
+                isActive 
+                  ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
+                  : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+              )}
+            >
+              <BookOpen size={20} />
+              <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Academic Records</span>
+            </NavLink>
+          </>
         )}
         {(profile.role === 'admin' || profile.role === 'teacher') && (
           <NavLink
@@ -88,7 +113,7 @@ export function Sidebar() {
             )}
           >
             <ClipboardList size={20} />
-            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Grade Management</span>
+            <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em]">Faculty Dashboard</span>
           </NavLink>
         )}
       </nav>
