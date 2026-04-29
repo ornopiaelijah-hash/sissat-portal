@@ -42,7 +42,12 @@ export function Sidebar() {
           </div>
           <div>
             <div className="text-on-surface font-bold text-sm group-hover:text-secondary transition-colors line-clamp-1">{profile.firstName} {profile.lastName}</div>
-            <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">{profile.college} • {profile.class}</div>
+            <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">
+              {profile.role === 'teacher' || profile.role === 'admin' 
+                ? `${profile.college} • ${profile.role === 'admin' ? 'Administrator' : 'Faculty'}`
+                : `${profile.college} • ${profile.class}`
+              }
+            </div>
           </div>
         </NavLink>
       </div>
@@ -103,7 +108,7 @@ export function Sidebar() {
         </div>
         <button className="w-full flex items-center justify-center gap-2 border border-white/20 text-on-surface py-3 rounded hover:bg-white/5 hover:border-white/40 transition-all font-bold uppercase text-[10px] tracking-widest">
           <LifeBuoy size={14} />
-          Student Support
+          {profile.role === 'teacher' || profile.role === 'admin' ? 'IT Support' : 'Student Support'}
         </button>
         <button 
           onClick={logout}

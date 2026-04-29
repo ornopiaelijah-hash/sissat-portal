@@ -7,6 +7,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import Dashboard from './pages/Dashboard';
+import FacultyDashboard from './pages/FacultyDashboard';
 import Courses from './pages/Courses';
 import StudentProfile from './pages/StudentProfile';
 import Settings from './pages/Settings';
@@ -52,6 +53,16 @@ function ComingSoon() {
   );
 }
 
+function RoleBasedDashboard() {
+  const { profile } = useStudent();
+  
+  if (profile.role === 'teacher' || profile.role === 'admin') {
+    return <FacultyDashboard />;
+  }
+  
+  return <Dashboard />;
+}
+
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isCheckingAuth } = useStudent();
   
@@ -78,7 +89,7 @@ export default function App() {
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
           <Route element={<AuthGuard><Layout /></AuthGuard>}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<RoleBasedDashboard />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/academic-records" element={<StudentGrades />} />
