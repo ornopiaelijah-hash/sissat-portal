@@ -14,10 +14,12 @@ interface StudentContextType {
   isLoadingData: boolean;
   isAuthenticated: boolean;
   isCheckingAuth: boolean;
-  login: (email: string, studentId: string) => Promise<boolean>;
+  login: (email: string, studentId: string, role?: 'student' | 'teacher' | 'admin') => Promise<boolean>;
   signup: (email: string, studentId: string, firstName: string, lastName: string) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshData: () => Promise<void>;
+  students: StudentProfile[];
+  updateStudentGrade: (studentId: string, moduleCode: string, newGrade: string) => Promise<void>;
 }
 
 const defaultProfile: StudentProfile = {
@@ -29,15 +31,22 @@ const defaultProfile: StudentProfile = {
   studentId: '2024-SIS-001',
   class: '12-JUPITER',
   college: 'TVL-ICT',
-  status: 'Active Student'
+  status: 'Active Student',
+  role: 'student',
 };
 
+const mockStudents: StudentProfile[] = [
+  { firstName: 'John Carlo', lastName: 'Geronio', email: 'john@example.com', phone: '', language: 'English', studentId: '2024-SIS-002', class: '12-JUPITER', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
+  { firstName: 'Benjo Laurence', lastName: 'Silos', email: 'benjo@example.com', phone: '', language: 'English', studentId: '2024-SIS-003', class: '12-MARS', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
+];
+
 const defaultGrades: TranscriptEntry[] = [
-  { id: '1', module: 'Advanced Computer Architecture', code: 'CS301', instructor: 'Dr. Sarah Vance', credits: 3.0, assessment: 'Final Exam', grade: '1.25' },
-  { id: '2', module: 'Database Systems & Design', code: 'CS302', instructor: 'Prof. Marcus Chen', credits: 3.0, assessment: 'Term Project', grade: '1.0' },
-  { id: '3', module: 'Human-Computer Interaction', code: 'IT305', instructor: 'Elena Rodriguez', credits: 3.0, assessment: 'Usability Audit', grade: '1.5' },
-  { id: '4', module: 'Professional Ethics in Computing', code: 'ETH101', instructor: 'Fr. Julian Santos', credits: 2.0, assessment: 'Case Analysis', grade: '1.0' },
-  { id: '5', module: 'Data Structures & Algorithms II', code: 'CS202', instructor: 'Dr. Alan Turing', credits: 3.0, assessment: 'Coding Sprint', grade: '1.75' },
+  { id: '1', studentId: '2024-SIS-001', module: 'Research 2', code: 'RES 2', instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Paper & Defense', grade: '95' },
+  { id: '2', studentId: '2024-SIS-001', module: "3I's", code: "3IS", instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Portfolio', grade: '92' },
+  { id: '3', studentId: '2024-SIS-001', module: 'Entrepreneurship', code: 'ENTREP', instructor: 'Mr. Jash Aiden Cortes III', credits: 1.0, assessment: 'Business Plan', grade: '88' },
+  { id: '4', studentId: '2024-SIS-001', module: 'CSS (NC II)', code: 'ICT-CSS', instructor: 'Mr. Joseph Peter Simeon', credits: 1.0, assessment: 'Practical Exam', grade: '98' },
+  { id: '5', studentId: '2024-SIS-001', module: 'HOPE', code: 'PE', instructor: 'Mr. Arbie Sadsad', credits: 1.0, assessment: 'Skills Test', grade: '90' },
+  { id: '6', studentId: '2024-SIS-001', module: 'Work Immersion', code: 'WI', instructor: 'Mr. Charles Faz Jr.', credits: 1.0, assessment: 'Final Report', grade: '96' },
 ];
 
 const StudentContext = createContext<StudentContextType | undefined>(undefined);
@@ -53,12 +62,18 @@ export function StudentProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Simulate auth check
     const checkAuth = () => {
-      const storedUser = localStorage.getItem('southdale_user');
+      const storedUser = localStorage.getItem('southdale_v4_user');
       if (storedUser) {
         const userData = JSON.parse(storedUser);
         setProfile(userData.profile);
         setIsAuthenticated(true);
       }
+      
+      const storedGrades = localStorage.getItem('southdale_v4_grades');
+      if (storedGrades) {
+        setGrades(JSON.parse(storedGrades));
+      }
+      
       setIsCheckingAuth(false);
       setIsLoadingData(false);
     };
@@ -79,30 +94,38 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       studentId,
     };
     
-    localStorage.setItem('southdale_user', JSON.stringify({ profile: newProfile }));
+    localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: newProfile }));
     setProfile(newProfile);
     setIsAuthenticated(true);
     setIsSaving(false);
     return true;
   };
 
-  const login = async (email: string, studentId: string) => {
+  const login = async (email: string, studentId: string, role?: 'student' | 'teacher' | 'admin') => {
     setIsSaving(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // For demo purposes, we accept the student ID "3518" as requested by user in previous turns
-    // or any non-empty student ID
+    // For demo purposes, we accept any non-empty student ID
     if (studentId) {
       const storedUser = localStorage.getItem('southdale_user');
+      let finalProfile: StudentProfile;
+
       if (storedUser) {
         const userData = JSON.parse(storedUser);
-        setProfile(userData.profile);
+        finalProfile = {
+          ...userData.profile,
+          role: role || userData.profile.role || 'student'
+        };
       } else {
-        setProfile({
+        finalProfile = {
           ...defaultProfile,
-          studentId: studentId
-        });
+          studentId: studentId,
+          role: role || 'student'
+        };
       }
+
+      localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: finalProfile }));
+      setProfile(finalProfile);
       setIsAuthenticated(true);
       setIsSaving(false);
       return true;
@@ -113,7 +136,7 @@ export function StudentProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    localStorage.removeItem('southdale_user');
+    localStorage.removeItem('southdale_v4_user');
     setIsAuthenticated(false);
     setProfile(null);
   };
@@ -131,12 +154,51 @@ export function StudentProvider({ children }: { children: ReactNode }) {
     setProfile(prev => {
       if (!prev) return null;
       const updated = { ...prev, ...updates };
-      localStorage.setItem('southdale_user', JSON.stringify({ profile: updated }));
+      localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: updated }));
       return updated;
     });
     
     setIsSaving(false);
     return true;
+  };
+
+  const updateStudentGrade = async (studentId: string, moduleCode: string, newGrade: string) => {
+    setIsSaving(true);
+    await new Promise(resolve => setTimeout(resolve, 600));
+    
+    setGrades(prev => {
+      let found = false;
+      let updated = prev.map(entry => {
+        if (entry.studentId === studentId && entry.code === moduleCode) {
+          found = true;
+          return { ...entry, grade: newGrade };
+        }
+        return entry;
+      });
+
+      if (!found) {
+        // Only add if it's one of the valid default courses
+        const course = defaultGrades.find(g => g.code === moduleCode);
+        if (course) {
+          const newEntry: TranscriptEntry = {
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            studentId,
+            module: course.module,
+            code: moduleCode,
+            instructor: course.instructor,
+            credits: course.credits,
+            assessment: course.assessment,
+            grade: newGrade
+          };
+          updated = [...updated, newEntry];
+        }
+      }
+      
+      localStorage.setItem('southdale_v4_grades', JSON.stringify(updated));
+      return updated;
+    });
+    
+    setIsSaving(false);
   };
 
   return (
@@ -151,7 +213,9 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       login, 
       signup, 
       logout,
-      refreshData
+      refreshData,
+      students: mockStudents,
+      updateStudentGrade
     }}>
       {children}
     </StudentContext.Provider>
