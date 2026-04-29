@@ -6,7 +6,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
-import { COURSES, ANNOUNCEMENTS, LOGO_URL } from '../constants';
+import { COURSES } from '../constants';
 import { 
   Calendar, 
   Users, 
@@ -14,9 +14,7 @@ import {
   BookOpen, 
   ChevronRight, 
   TrendingUp,
-  Clock,
   CheckCircle2,
-  AlertCircle,
   GraduationCap
 } from 'lucide-react';
 import { useStudent } from '../context/StudentContext';
@@ -95,7 +93,7 @@ const QUICK_STATS = [
 ];
 
 export default function FacultyDashboard() {
-  const { profile, students } = useStudent();
+  const { profile } = useStudent();
 
   return (
     <motion.div 
@@ -116,10 +114,7 @@ export default function FacultyDashboard() {
           <h1 className="text-4xl text-on-surface font-bold tracking-tight mb-2 font-headline">Welcome back, {profile.firstName}</h1>
           <p className="text-on-surface-variant font-sans">Department of {profile.college} • Senior Faculty</p>
         </div>
-        <div className="hidden lg:flex items-center gap-3 bg-white/5 px-6 py-3 rounded-xl border border-white/10 relative z-10">
-          <img src={LOGO_URL} className="w-8 h-8 object-contain" alt="Branding" />
-          <div className="text-[10px] font-bold uppercase tracking-widest text-secondary">Academic Term: 2024-2025 Q4</div>
-        </div>
+        
       </header>
 
       {/* Quick Stats */}
@@ -231,40 +226,7 @@ export default function FacultyDashboard() {
             </ul>
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-primary-container p-6 rounded-xl border border-secondary/10 velvet-depth">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary mb-4">Quick Actions</h3>
-            <div className="grid grid-cols-2 gap-3">
-              <Link 
-                to="/grades"
-                className="flex flex-col items-center gap-2 p-4 bg-white/5 rounded-lg hover:bg-secondary/10 transition-all group border border-white/5 hover:border-secondary/30"
-              >
-                <ClipboardList size={24} className="text-on-surface-variant group-hover:text-secondary transition-colors" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-on-surface">Manage Grades</span>
-              </Link>
-              <Link 
-                to="/courses"
-                className="flex flex-col items-center gap-2 p-4 bg-white/5 rounded-lg hover:bg-secondary/10 transition-all group border border-white/5 hover:border-secondary/30"
-              >
-                <BookOpen size={24} className="text-on-surface-variant group-hover:text-secondary transition-colors" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-on-surface">Course Materials</span>
-              </Link>
-              <Link 
-                to="/schedule"
-                className="flex flex-col items-center gap-2 p-4 bg-white/5 rounded-lg hover:bg-secondary/10 transition-all group border border-white/5 hover:border-secondary/30"
-              >
-                <Calendar size={24} className="text-on-surface-variant group-hover:text-secondary transition-colors" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-on-surface">Schedule</span>
-              </Link>
-              <Link 
-                to="/profile"
-                className="flex flex-col items-center gap-2 p-4 bg-white/5 rounded-lg hover:bg-secondary/10 transition-all group border border-white/5 hover:border-secondary/30"
-              >
-                <Users size={24} className="text-on-surface-variant group-hover:text-secondary transition-colors" />
-                <span className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-on-surface">My Profile</span>
-              </Link>
-            </div>
-          </div>
+          
         </section>
       </div>
 
@@ -324,42 +286,7 @@ export default function FacultyDashboard() {
         </div>
       </section>
 
-      {/* Recent Student Activity */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl text-on-surface font-bold tracking-tight font-headline flex items-center gap-3">
-            <Clock className="text-secondary" />
-            Recent Submissions
-          </h2>
-        </div>
-        <div className="bg-surface-container rounded-xl border border-white/5 overflow-hidden">
-          <div className="divide-y divide-white/5">
-            {students.map((student) => (
-              <div 
-                key={student.studentId}
-                className="flex items-center gap-4 p-5 hover:bg-white/5 transition-colors cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  <Users size={18} className="text-on-surface-variant" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-bold text-on-surface text-sm">{student.firstName} {student.lastName}</div>
-                  <div className="text-[10px] text-on-surface-variant uppercase tracking-wider">
-                    {student.class} • Submitted Research Proposal
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] text-secondary font-bold">2 hours ago</div>
-                  <div className="flex items-center gap-1 text-[9px] text-green-500 mt-1">
-                    <CheckCircle2 size={10} />
-                    <span className="uppercase tracking-wider font-bold">On Time</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
     </motion.div>
   );
 }
