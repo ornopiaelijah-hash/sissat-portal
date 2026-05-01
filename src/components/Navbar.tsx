@@ -26,9 +26,16 @@ export function Navbar() {
 
         <div className="flex items-center gap-8">
           <nav className="hidden md:flex items-center gap-8">
-            <a href="/" className="font-headline tracking-tight text-lg text-on-surface/80 hover:text-secondary transition-all">Home</a>
+            <a href="/dashboard" className="font-headline tracking-tight text-lg text-on-surface/80 hover:text-secondary transition-all">Home</a>
             <a href="/courses" className="font-headline tracking-tight text-lg text-on-surface/80 hover:text-secondary transition-all border-b-2 border-transparent hover:border-secondary">Courses</a>
-            <a href="/about" className="font-headline tracking-tight text-lg text-on-surface/80 hover:text-secondary transition-all">About Us</a>
+            <a 
+              href="https://www.facebook.com/share/1F4cmLUatG/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-headline tracking-tight text-lg text-on-surface/80 hover:text-secondary transition-all"
+            >
+              About Us
+            </a>
           </nav>
 
           <div className="relative hidden lg:block group">
@@ -39,10 +46,6 @@ export function Navbar() {
             />
             <Search className="absolute right-3 top-2.5 text-slate-400 group-hover:text-secondary transition-colors" size={18} />
           </div>
-
-          <button className="bg-secondary text-on-surface px-6 py-2.5 rounded-lg font-bold tracking-wide scale-105 active:scale-95 transition-all shadow-md hover:brightness-110 editorial-shadow metallic-glow">
-            Apply Now
-          </button>
         </div>
       </div>
     </header>

@@ -46,12 +46,12 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-primary flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-10">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full" />
       </div>
 
       <motion.div 
@@ -60,21 +60,21 @@ export default function Signup() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-surface-container rounded-2xl border border-white/10 mb-6 shadow-2xl relative overflow-hidden group">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl border-4 border-primary mb-6 shadow-2xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-secondary/5 group-hover:bg-secondary/10 transition-colors" />
             <img 
               alt="Southdale Logo" 
-              className="w-10 h-10 object-contain relative z-10" 
+              className="w-12 h-12 object-contain relative z-10" 
               src={LOGO_URL}
             />
           </div>
-          <h1 className="text-2xl text-on-surface font-bold tracking-tight mb-2 font-headline uppercase">
-            Sign Up
+          <h1 className="text-3xl text-on-surface font-black tracking-tighter mb-2 font-headline uppercase leading-tight">
+            SISSAT-PORTAL
           </h1>
-          <p className="text-secondary italic uppercase tracking-[0.3em] text-[8px] font-bold">Southdale Student Portal</p>
+          <p className="text-secondary italic uppercase tracking-[0.3em] text-[8px] font-bold font-sans">Institutional Enrollment Sequence</p>
         </div>
 
-        <div className="bg-surface-container border border-white/5 rounded-xl editorial-shadow p-8 relative overflow-hidden">
+        <div className="bg-surface-container border border-white/10 rounded-2xl velvet-depth p-8 relative overflow-hidden">
           <header className="mb-6 border-b border-white/5 pb-4">
             <h2 className="text-xl font-bold text-on-surface font-headline mb-1">Create Account</h2>
             <p className="text-on-surface-variant text-xs">Fill in your details to get started.</p>
@@ -174,7 +174,7 @@ export default function Signup() {
 
             <button 
               disabled={isLoading}
-              className="w-full bg-secondary text-primary py-3.5 rounded-lg font-bold tracking-widest text-[10px] uppercase transition-all hover:brightness-110 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4 shadow-2xl relative overflow-hidden group"
+              className="w-full bg-secondary text-on-secondary py-3.5 rounded-lg font-black tracking-[0.4em] text-[10px] uppercase transition-all hover:brightness-110 hover:shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4 shadow-2xl relative overflow-hidden group"
             >
               <div className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
               {isLoading ? (

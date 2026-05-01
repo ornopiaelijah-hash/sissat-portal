@@ -16,10 +16,9 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const NAV_ITEMS = [
-  { icon: LayoutDashboard, label: 'Dashboard', to: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard' },
   { icon: Calendar, label: 'Schedule', to: '/schedule' },
   { icon: GraduationCap, label: 'Courses', to: '/courses' },
-  { icon: UserCheck, label: 'Admissions', to: '/admissions' },
   { icon: Settings, label: 'Settings', to: '/settings' },
 ];
 

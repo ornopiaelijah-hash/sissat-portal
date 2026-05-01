@@ -18,6 +18,7 @@ import RoleGuard from '@/components/RoleGuard';
 import { StudentProvider, useStudent } from './context/StudentContext';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import LandingPage from './pages/LandingPage';
 import { Loader2 } from 'lucide-react';
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -65,7 +66,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
@@ -76,10 +77,11 @@ export default function App() {
     <StudentProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
           <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
           <Route element={<AuthGuard><Layout /></AuthGuard>}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/profile" element={<StudentProfile />} />
             <Route path="/academic-records" element={<StudentGrades />} />

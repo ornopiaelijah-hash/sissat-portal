@@ -65,13 +65,12 @@ export default function Login() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-primary flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-20">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-white/5 rounded-full" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/5 rounded-full" />
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-10">
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full" />
       </div>
 
       <motion.div 
@@ -80,30 +79,27 @@ export default function Login() {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-surface-container rounded-2xl border border-white/10 mb-8 shadow-2xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-secondary/5 group-hover:bg-secondary/10 transition-colors" />
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-2xl border-4 border-primary mb-8 shadow-2xl relative overflow-hidden group">
+            <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
             <img 
               alt="Southdale Logo" 
-              className="w-12 h-12 object-contain relative z-10" 
+              className="w-16 h-16 object-contain relative z-10" 
               src={LOGO_URL}
             />
           </div>
-          <h1 className="text-3xl text-on-surface font-bold tracking-tight mb-2 font-headline uppercase leading-tight">
-            Southdale International School <br />
-            <span className="text-lg opacity-80">of Science, Arts and Technology</span>
+          <h1 className="text-4xl text-on-surface font-black tracking-tighter mb-2 font-headline uppercase leading-tight">
+            SISSAT-PORTAL
           </h1>
-          <p className="text-secondary italic uppercase tracking-[0.3em] text-[10px] font-bold">Institutional Student Portal</p>
+          <p className="text-secondary italic uppercase tracking-[0.3em] text-[10px] font-bold">Institutional Access Gateway</p>
         </div>
 
-        <div className="bg-surface-container border border-white/5 rounded-xl editorial-shadow p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-            <Shield size={120} className="text-on-surface" />
-          </div>
-
-          <header className="mb-8 border-b border-white/5 pb-6">
-            <h2 className="text-2xl font-bold text-on-surface font-headline mb-1">Electronic Access</h2>
-            <p className="text-on-surface-variant text-sm">Synchronize with your academic ledger.</p>
-          </header>
+        <div className="bg-surface-container border border-white/10 rounded-2xl velvet-depth p-10 relative overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-secondary/5 rounded-full blur-2xl" />
+          <div className="relative z-10">
+            <header className="mb-8 border-b border-white/10 pb-6">
+              <h2 className="text-2xl font-black text-on-surface font-headline mb-1 uppercase tracking-tight">Electronic Access</h2>
+              <p className="text-on-surface-variant text-[10px] font-bold uppercase tracking-widest opacity-60">Synchronize with your academic ledger.</p>
+            </header>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-6">
@@ -186,7 +182,7 @@ export default function Login() {
 
               <button 
                 disabled={isLoading}
-                className="w-full bg-secondary text-primary py-5 rounded-xl font-black tracking-[0.4em] text-xs uppercase transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-secondary/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4 shadow-xl"
+                className="w-full bg-secondary text-on-secondary py-5 rounded-xl font-black tracking-[0.4em] text-xs uppercase transition-all hover:brightness-110 hover:shadow-2xl hover:shadow-secondary/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-4 shadow-xl shadow-secondary/10"
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={18} />
@@ -206,8 +202,9 @@ export default function Login() {
             </div>
           </footer>
         </div>
+      </div>
         
-        <div className="mt-8 flex justify-center items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+      <div className="mt-8 flex justify-center items-center gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
           <span className="hover:text-secondary cursor-pointer transition-colors">Privacy Lexicon</span>
           <div className="w-1 h-1 rounded-full bg-white/10" />
           <span className="hover:text-secondary cursor-pointer transition-colors">System Status</span>
