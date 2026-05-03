@@ -7,25 +7,26 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Clock, Calendar, Info, MapPin, User } from 'lucide-react';
 import { useStudent } from '../context/StudentContext';
+import { LOGO_URL } from '../constants';
 
 const SCHEDULE_DATA = [
   {
     time: '08:00 - 08:55 AM',
-    monday: { subject: 'Research 2', instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
-    tuesday: { subject: 'Research 2', instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
+    monday: { subject: `Research 2`, instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
+    tuesday: { subject: `Research 2`, instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
     wednesday: null,
-    thursday: { subject: 'Entrepreneurship', instructor: '', color: 'bg-green-500/20 text-green-200 border-green-500/30' },
-    friday: { subject: 'Food & Beverages 2', instructor: '', color: 'bg-pink-500/20 text-pink-200 border-pink-500/30' },
-    saturday: { subject: 'Work Immersion', instructor: '', color: 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30' },
+    thursday: { subject: `Entrepreneurship`, instructor: '', color: 'bg-green-500/20 text-green-200 border-green-500/30' },
+    friday: { subject: `Food & Beverages 2`, instructor: '', color: 'bg-pink-500/20 text-pink-200 border-pink-500/30' },
+    saturday: { subject: `Work Immersion`, instructor: '', color: 'bg-yellow-500/20 text-yellow-200 border-yellow-500/30' },
   },
   {
     time: '08:55 - 09:50 AM',
-    monday: { subject: "3I's", instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
-    tuesday: { subject: "3I's", instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
+    monday: { subject: `3I's`, instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
+    tuesday: { subject: `3I's`, instructor: 'S. Marlou', color: 'bg-orange-500/20 text-orange-200 border-orange-500/30' },
     wednesday: null,
-    thursday: { subject: 'Entrepreneurship', instructor: '', color: 'bg-green-500/20 text-green-200 border-green-500/30' },
-    friday: { subject: 'CSS (NC II)', instructor: '', color: 'bg-yellow-600/20 text-yellow-100 border-yellow-600/30' },
-    saturday: { subject: 'HOPE', instructor: '', color: 'bg-orange-600/20 text-orange-100 border-orange-600/30' },
+    thursday: { subject: `Entrepreneurship`, instructor: '', color: 'bg-green-500/20 text-green-200 border-green-500/30' },
+    friday: { subject: `CSS (NC II)`, instructor: '', color: 'bg-yellow-600/20 text-yellow-100 border-yellow-600/30' },
+    saturday: { subject: `HOPE`, instructor: '', color: 'bg-orange-600/20 text-orange-100 border-orange-600/30' },
   },
   {
     time: '09:50 - 10:10 AM',
@@ -107,8 +108,13 @@ export default function Schedule() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto"
+      className="max-w-7xl mx-auto relative overflow-hidden"
     >
+      {/* Background Faded Logo */}
+      <div className="absolute -right-32 -top-32 opacity-10 rotate-12 select-none pointer-events-none transform scale-150 [mask-image:radial-gradient(circle,black_20%,transparent_70%)] z-0">
+        <img src={LOGO_URL} alt="" className="w-[500px] h-[500px] grayscale brightness-125 contrast-75" />
+      </div>
+
       <header className="mb-12">
         <div className="flex items-center gap-3 mb-4">
           <Calendar className="text-secondary" size={24} />

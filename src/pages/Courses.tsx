@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { COURSES, SUBMISSIONS } from '../constants';
+import { COURSES, SUBMISSIONS, LOGO_URL } from '../constants';
 import { BookOpen, Book, ArrowRight } from 'lucide-react';
 
 export default function Courses() {
@@ -14,7 +14,13 @@ export default function Courses() {
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
+      className="relative overflow-hidden"
     >
+      {/* Background Faded Logo */}
+      <div className="absolute -right-32 -top-32 opacity-10 rotate-12 select-none pointer-events-none transform scale-150 [mask-image:radial-gradient(circle,black_20%,transparent_70%)] z-0">
+        <img src={LOGO_URL} alt="" className="w-[500px] h-[500px] grayscale brightness-125 contrast-75" />
+      </div>
+
       <header className="mb-16">
         <h1 className="text-5xl md:text-7xl font-headline font-bold text-on-surface tracking-tight mb-4">My Courses</h1>
         <p className="text-on-surface-variant max-w-2xl text-lg font-light leading-relaxed">

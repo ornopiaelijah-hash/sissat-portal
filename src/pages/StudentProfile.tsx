@@ -10,7 +10,7 @@ import { User, Mail, Phone, Globe, GraduationCap, School, ShieldCheck, Save, Loa
 import { LOGO_URL } from '../constants';
 
 export default function StudentProfile() {
-  const { profile, updateProfile, isSaving, isLoadingData } = useStudent();
+  const { profile, updateProfile, isSaving, isLoadingData, grades } = useStudent();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -93,8 +93,13 @@ export default function StudentProfile() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="pb-24 relative"
+      className="pb-24 relative overflow-hidden"
     >
+      {/* Background Faded Logo */}
+      <div className="absolute -right-32 -top-32 opacity-10 rotate-12 select-none pointer-events-none transform scale-150 [mask-image:radial-gradient(circle,black_20%,transparent_70%)] z-0">
+        <img src={LOGO_URL} alt="" className="w-[500px] h-[500px] grayscale brightness-125 contrast-75" />
+      </div>
+
       <AnimatePresence>
         {showSuccess && (
           <motion.div 
@@ -332,12 +337,14 @@ export default function StudentProfile() {
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold uppercase text-secondary tracking-[0.2em]">Departmental Strand</label>
                   {isEditing ? (
-                    <input 
-                      type="text"
+                    <select 
                       value={formData.college}
                       onChange={(e) => setFormData({ ...formData, college: e.target.value })}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-on-surface focus:outline-none focus:border-secondary transition-all font-sans text-sm"
-                    />
+                      className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-on-surface focus:outline-none focus:border-secondary transition-all font-sans text-sm appearance-none"
+                    >
+                      <option className="bg-primary" value="TVL-ICT">TVL-ICT</option>
+                      <option className="bg-primary" value="TVL-H.E">TVL-H.E</option>
+                    </select>
                   ) : (
                     <div className="p-4 bg-white/2 rounded-lg border border-white/5 flex items-center gap-4 group">
                       <School className="text-on-surface-variant group-hover:text-secondary transition-colors" size={18} />
@@ -378,6 +385,50 @@ export default function StudentProfile() {
           </section>
         </div>
       </div>
+
+      {/* Academic Record Summary Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="mt-8"
+      >
+        <section className="bg-surface-container rounded-2xl p-1 border border-white/5">
+          <div className="bg-primary-container rounded-xl p-8 md:p-12 velvet-depth">
+            <h3 className="text-xl font-bold text-on-surface mb-8 font-headline uppercase tracking-tight flex items-center gap-3">
+              Official Academic Record Summary
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {grades.filter(g => g.studentId === profile.uid).length > 0 ? (
+                grades
+                  .filter(g => g.studentId === profile.uid)
+                  .map((grade) => (
+                    <div key={grade.id} className="p-6 bg-white/2 rounded-xl border border-white/5 hover:border-secondary/20 transition-all group">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-[10px] font-mono font-bold text-secondary uppercase tracking-widest mb-1">{grade.code}</p>
+                          <h4 className="text-on-surface font-bold group-hover:text-secondary transition-colors">{grade.module}</h4>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Final Average</p>
+                          <div className={`text-2xl font-headline font-black ${Number(grade.grade) >= 75 ? 'text-green-400' : 'text-red-400'}`}>
+                            {grade.grade || 'IP'}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <div className="col-span-full py-12 flex flex-col items-center justify-center text-on-surface-variant opacity-40">
+                  <GraduationCap size={48} className="mb-4" />
+                  <p className="text-xs uppercase font-bold tracking-widest italic">No academic records synchronized for this identity.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      </motion.div>
     </motion.div>
   );
 }

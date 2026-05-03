@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { LECTURES, DEADLINES, ANNOUNCEMENTS, LOGO_URL } from '../constants';
-import { Calendar, FileText, ChevronLeft, ChevronRight, ArrowRight, X, Trophy } from 'lucide-react';
+import { Calendar, FileText, ChevronLeft, ChevronRight, ArrowRight, X, Trophy, ChevronDown, Settings as SettingsIcon } from 'lucide-react';
 import { useStudent } from '../context/StudentContext';
 import { Announcement } from '../types';
 
@@ -30,18 +30,18 @@ export default function Dashboard() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedAnnouncement(null)}
-              className="absolute inset-0 bg-primary/80 backdrop-blur-md"
+              className="absolute inset-0 bg-surface/80 backdrop-blur-md"
             />
             <motion.div 
               layoutId={`announcement-${selectedAnnouncement.id}`}
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-surface-container w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative z-10 border border-white/10"
+              className="bg-surface-container w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl relative z-10 border border-on-surface/10"
             >
               <button 
                 onClick={() => setSelectedAnnouncement(null)}
-                className="absolute top-4 right-4 z-20 p-2 bg-primary/50 hover:bg-primary rounded-full text-on-surface transition-all"
+                className="absolute top-4 right-4 z-20 p-2 bg-on-surface/10 hover:bg-on-surface/20 rounded-full text-on-surface transition-all"
               >
                 <X size={20} />
               </button>
@@ -75,9 +75,9 @@ export default function Dashboard() {
                     <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary flex items-center gap-2">
                        Event Schedule & Key Information
                     </h4>
-                    <div className="space-y-3 bg-white/5 p-6 rounded-xl border border-white/5">
+                    <div className="space-y-3 bg-on-surface/5 p-6 rounded-xl border border-on-surface/5">
                       {selectedAnnouncement.details.map((detail, idx) => (
-                        <div key={idx} className="flex gap-4 items-start py-2 border-b border-white/5 last:border-0">
+                        <div key={idx} className="flex gap-4 items-start py-2 border-b border-on-surface/5 last:border-0">
                           <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 shrink-0 shadow-[0_0_8px_#775a19]" />
                           <p className="text-on-surface font-sans text-sm leading-relaxed">{detail}</p>
                         </div>
@@ -101,27 +101,49 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      <header className="mb-12 flex flex-col md:flex-row justify-between md:items-end gap-4 relative overflow-hidden p-8 bg-surface-container rounded-2xl border border-white/5">
-        <div className="absolute -right-16 -top-16 opacity-[0.03] rotate-12 select-none pointer-events-none">
-          <img src={LOGO_URL} alt="" className="w-96 h-96 grayscale" />
+      <header className="mb-12 flex flex-col md:flex-row justify-between md:items-center gap-6 relative overflow-hidden p-10 bg-surface-container rounded-[2rem] border border-on-surface/5 velvet-depth shadow-2xl">
+        <div className="absolute -right-32 -top-32 opacity-10 rotate-12 select-none pointer-events-none transform scale-150 [mask-image:radial-gradient(circle,black_20%,transparent_70%)]">
+          <img src={LOGO_URL} alt="" className="w-[500px] h-[500px] grayscale brightness-125 contrast-75" />
         </div>
-        <div className="relative z-10">
-          <h1 className="text-4xl text-on-surface font-bold tracking-tight mb-2 font-headline">
-            {profile.role === 'admin' ? 'System Console' : profile.role === 'teacher' ? 'Faculty Portal' : `Welcome back, ${profile.firstName}`}
+        
+        <div className="relative z-10 space-y-2">
+          <div className="flex items-center gap-3 text-secondary mb-1">
+            <Trophy size={18} className="animate-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Academic Excellence Portal</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl text-on-surface font-black tracking-tighter mb-2 font-headline leading-none">
+            {profile.role === 'admin' ? 'System Console' : profile.role === 'faculty' ? 'Faculty Portal' : `Welcome, ${profile.fullName || profile.firstName}`}
           </h1>
-          {profile.role === 'student' && (
-            <p className="text-on-surface-variant font-sans">{profile.college} • {profile.class}</p>
-          )}
-          {profile.role === 'teacher' && (
-            <p className="text-on-surface-variant font-sans font-medium italic">Welcome back, Instructor</p>
-          )}
-          {profile.role === 'admin' && (
-            <p className="text-on-surface-variant font-sans font-medium italic">Welcome back, System Administrator</p>
-          )}
+          <div className="flex items-center gap-4">
+            {profile.role === 'student' && (
+              <p className="text-on-surface-variant font-sans font-medium flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                {profile.college} • {profile.class}
+              </p>
+            )}
+            {profile.role === 'faculty' && (
+              <p className="text-on-surface-variant font-sans font-medium italic flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                Institutional Instructor Oversight
+              </p>
+            )}
+            {profile.role === 'admin' && (
+              <p className="text-on-surface-variant font-sans font-medium italic flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-secondary"></span>
+                Global System Administrator
+              </p>
+            )}
+          </div>
         </div>
-        <div className="hidden lg:flex items-center gap-3 bg-white/5 px-6 py-3 rounded-xl border border-white/10 relative z-10">
-          <img src={LOGO_URL} className="w-8 h-8 object-contain" alt="Branding" />
-          <div className="text-[10px] font-bold uppercase tracking-widest text-secondary">Institutional Synchronization Active</div>
+
+        <div className="flex items-center gap-4 bg-primary/10 dark:bg-on-surface/5 px-8 py-5 rounded-2xl border border-on-surface/10 backdrop-blur-md relative z-10 shadow-xl group hover:border-secondary transition-all">
+          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2 shadow-inner group-hover:scale-110 transition-transform">
+            <img src={LOGO_URL} className="w-full h-full object-contain" alt="Branding" />
+          </div>
+          <div>
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary">Status: Active</div>
+            <div className="text-xs font-bold text-on-surface">Institutional Ledger Synced</div>
+          </div>
         </div>
       </header>
 
@@ -142,7 +164,7 @@ export default function Dashboard() {
             {LECTURES.map((lecture, idx) => (
               <div 
                 key={lecture.id}
-                className={`flex items-start gap-6 p-4 -mx-4 hover:bg-white/5 transition-all duration-200 rounded-lg cursor-pointer ${idx > 0 ? 'border-t border-white/5 pt-6' : ''}`}
+                className={`flex items-start gap-6 p-4 -mx-4 hover:bg-on-surface/5 transition-all duration-200 rounded-lg cursor-pointer ${idx > 0 ? 'border-t border-on-surface/5 pt-6' : ''}`}
               >
                 <div className="w-20 pt-1 text-right shrink-0">
                   <div className="text-sm font-bold text-on-surface">{lecture.time}</div>
@@ -152,9 +174,9 @@ export default function Dashboard() {
                   <h3 className="text-lg font-headline text-on-surface group-hover:text-secondary transition-colors">{lecture.title}</h3>
                   <p className="text-sm text-on-surface-variant mb-2">{lecture.instructor} • {lecture.location}</p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="bg-primary text-on-surface px-2 py-0.5 text-[10px] font-bold rounded uppercase border border-white/10">{lecture.type}</span>
+                    <span className="bg-primary-container text-on-surface px-2 py-0.5 text-[10px] font-bold rounded uppercase border border-on-surface/10">{lecture.type}</span>
                     {lecture.notes && (
-                      <span className="bg-white/5 text-on-surface-variant px-2 py-0.5 text-[10px] font-bold rounded uppercase">{lecture.notes}</span>
+                      <span className="bg-on-surface/5 text-on-surface-variant px-2 py-0.5 text-[10px] font-bold rounded uppercase">{lecture.notes}</span>
                     )}
                   </div>
                 </div>
@@ -165,14 +187,16 @@ export default function Dashboard() {
 
         {/* Side Stats */}
         <section className="md:col-span-4 space-y-8">
-          <div className="bg-surface-container p-8 rounded-xl border border-white/5">
+          {/* Quarter selection and insights removed per user request */}
+
+          <div className="bg-surface-container p-8 rounded-xl border border-on-surface/5">
             <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary mb-6">Upcoming Deadlines</h3>
             <ul className="space-y-4">
               {DEADLINES.map((deadline) => (
-                <li key={deadline.id} className="flex items-center justify-between group cursor-pointer hover:bg-white/5 -mx-2 px-2 py-2 rounded transition-colors">
+                <li key={deadline.id} className="flex items-center justify-between group cursor-pointer hover:bg-on-surface/5 -mx-2 px-2 py-2 rounded transition-colors">
                   <div>
                     <p className="text-sm font-bold text-on-surface group-hover:text-secondary transition-colors">{deadline.title}</p>
-                    <p className="text-[10px] text-error font-bold uppercase">Due in {deadline.dueDate}</p>
+                    <p className="text-[10px] text-red-500 font-bold uppercase">Due in {deadline.dueDate}</p>
                   </div>
                   <FileText size={18} className="text-on-surface-variant group-hover:text-secondary transition-all" />
                 </li>
@@ -203,10 +227,10 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl text-on-surface font-bold tracking-tight font-headline">Institutional Announcements</h2>
           <div className="flex gap-2">
-            <button className="p-2 border border-white/10 rounded-lg hover:bg-white/10 hover:text-secondary transition-all">
+            <button className="p-2 border border-on-surface/10 rounded-lg hover:bg-on-surface/10 hover:text-secondary transition-all">
               <ChevronLeft size={20} />
             </button>
-            <button className="p-2 border border-white/10 rounded-lg hover:bg-white/10 hover:text-secondary transition-all">
+            <button className="p-2 border border-on-surface/10 rounded-lg hover:bg-on-surface/10 hover:text-secondary transition-all">
               <ChevronRight size={20} />
             </button>
           </div>

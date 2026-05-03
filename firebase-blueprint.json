@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "StudentProfile": {
+      "title": "Student Profile",
+      "description": "Represents a user profile in the Southdale International School system",
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string", "description": "User's first name" },
+        "lastName": { "type": "string", "description": "User's last name" },
+        "fullName": { "type": "string", "description": "Full display name" },
+        "email": { "type": "string", "format": "email", "description": "Primary email address" },
+        "phone": { "type": "string", "description": "Contact number" },
+        "language": { "type": "string", "description": "Preferred language" },
+        "studentId": { "type": "string", "description": "Unique school ID (e.g., 2026-SIS-001)" },
+        "class": { "type": "string", "description": "School year and section" },
+        "college": { "type": "string", "description": "Department or Strand" },
+        "section": { "type": "string", "description": "Specific section identifier" },
+        "status": { "type": "string", "description": "Enrollment status" },
+        "avatar": { "type": "string", "description": "URL to profile picture" },
+        "role": { 
+          "type": "string", 
+          "enum": ["student", "faculty", "admin"],
+          "description": "User access level" 
+        }
+      },
+      "required": ["firstName", "lastName", "email", "role"]
+    },
+    "TranscriptEntry": {
+      "title": "Transcript Entry",
+      "description": "A single grade entry for a student",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string", "description": "ID of the student this grade belongs to" },
+        "module": { "type": "string", "description": "Course name" },
+        "code": { "type": "string", "description": "Course code" },
+        "instructor": { "type": "string", "description": "Faculty member name" },
+        "credits": { "type": "number", "description": "Credit units" },
+        "assessment": { "type": "string", "description": "Type of assessment" },
+        "grade": { "type": "string", "description": "Numeric or letter grade" },
+        "q1": { "type": "string", "description": "Quarter 1 Grade" },
+        "q2": { "type": "string", "description": "Quarter 2 Grade" },
+        "q3": { "type": "string", "description": "Quarter 3 Grade" },
+        "q4": { "type": "string", "description": "Quarter 4 Grade" },
+        "average": { "type": "string", "description": "Final Average Grade" }
+      },
+      "required": ["studentId", "module", "code", "grade"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "StudentProfile",
+      "description": "User profile data"
+    },
+    "/grades/{gradeId}": {
+      "schema": "TranscriptEntry",
+      "description": "Centralized student grades tracking"
+    }
+  }
+}

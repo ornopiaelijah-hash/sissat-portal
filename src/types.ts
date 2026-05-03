@@ -65,18 +65,26 @@ export interface TranscriptEntry {
   credits: number;
   assessment: string;
   grade: string;
+  q1?: string;
+  q2?: string;
+  q3?: string;
+  q4?: string;
+  average?: string;
 }
 
 export interface StudentProfile {
+  uid?: string;
   firstName: string;
   lastName: string;
+  fullName?: string;
   email: string;
   phone: string;
   language: string;
   studentId: string;
   class: string;
   college: string;
+  section?: string;
   status: string;
   avatar?: string;
-  role: 'student' | 'teacher' | 'admin';
+  role: 'student' | 'faculty' | 'admin';
 }

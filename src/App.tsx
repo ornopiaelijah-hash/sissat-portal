@@ -12,6 +12,7 @@ import StudentProfile from './pages/StudentProfile';
 import Settings from './pages/Settings';
 import Schedule from './pages/Schedule';
 import GradeManagement from './pages/GradeManagement';
+import GradingSystem from './pages/GradingSystem';
 import FacultyDashboard from './pages/FacultyDashboard';
 import StudentGrades from './pages/StudentGrades';
 import RoleGuard from '@/components/RoleGuard';
@@ -43,7 +44,7 @@ function ComingSoon() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
       <h2 className="text-4xl font-headline font-bold text-on-surface mb-4">Module Under Maintenance</h2>
-      <p className="text-secondary italic uppercase tracking-widest text-sm font-bold">Southdale International School Archive</p>
+      <p className="text-secondary uppercase tracking-widest text-sm font-bold">Southdale International School Archive</p>
       <div className="mt-8 p-4 bg-white/5 rounded-lg border border-white/10 max-w-md">
         <p className="text-on-surface-variant text-sm">
           Access to this academic register is temporarily restricted for scheduled synchronization. 
@@ -84,11 +85,11 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/profile" element={<StudentProfile />} />
-            <Route path="/academic-records" element={<StudentGrades />} />
+            <Route path="/academic-records" element={<GradingSystem />} />
             <Route 
               path="/grades" 
               element={
-                <RoleGuard allowedRoles={['teacher', 'admin']}>
+                <RoleGuard allowedRoles={['faculty', 'admin']}>
                   <FacultyDashboard />
                 </RoleGuard>
               } 

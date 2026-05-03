@@ -23,39 +23,26 @@ const NAV_ITEMS = [
 ];
 
 export function Sidebar() {
-  const { profile, logout } = useStudent();
+  const { profile, logout, emailVerified, sendVerification } = useStudent();
+  const [isSending, setIsSending] = React.useState(false);
+  const [isSent, setIsSent] = React.useState(false);
+
+  const handleResend = async () => {
+    setIsSending(true);
+    try {
+      await sendVerification();
+      setIsSent(true);
+      setTimeout(() => setIsSent(false), 5000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   return (
-    <aside className="bg-primary fixed left-0 top-0 h-full w-72 pt-28 border-r border-white/5 flex flex-col z-40 hidden md:flex">
-      <div className="px-8 mb-12">
-        <NavLink to="/settings" className={({ isActive }) => cn(
-          "flex items-center gap-4 mb-2 group cursor-pointer p-2 -mx-2 rounded-lg transition-colors",
-          isActive ? "bg-white/10" : "hover:bg-white/5"
-        )}>
-          <div className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/10 group-hover:border-secondary/50 transition-all shrink-0 overflow-hidden">
-            {profile.role === 'teacher' || profile.role === 'admin' ? (
-              <img src={LOGO_URL} alt="School" className="w-[80%] h-[80%] object-contain" />
-            ) : profile.avatar ? (
-              <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <User className="text-on-surface-variant group-hover:text-secondary" size={24} />
-            )}
-          </div>
-          <div>
-            <div className="text-on-surface font-bold text-sm group-hover:text-secondary transition-colors line-clamp-1">
-              {profile.role === 'admin' ? 'System Administrator' : profile.role === 'teacher' ? 'Faculty Member' : `${profile.firstName} ${profile.lastName}`}
-            </div>
-            {profile.role === 'student' && (
-              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">{profile.college} • {profile.class}</div>
-            )}
-            {profile.role === 'teacher' && (
-              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">Faculty Support Access</div>
-            )}
-            {profile.role === 'admin' && (
-              <div className="text-on-surface-variant text-[10px] font-bold uppercase tracking-[0.1em]">Institutional Management</div>
-            )}
-          </div>
-        </NavLink>
-      </div>
+    <aside className="bg-primary fixed left-0 top-0 h-full w-72 pt-28 border-r border-on-primary/5 flex flex-col z-40 hidden md:flex">
+      
 
       <nav className="flex flex-col gap-1 flex-1">
         {NAV_ITEMS.map((item) => (
@@ -66,7 +53,7 @@ export function Sidebar() {
               "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
               isActive 
                 ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
-                : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+                : "text-on-primary/70 hover:bg-on-primary/5 hover:text-on-primary hover:translate-x-1"
             )}
           >
             <item.icon size={20} />
@@ -81,7 +68,7 @@ export function Sidebar() {
                 "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
                 isActive 
                   ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
-                  : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+                  : "text-on-primary/70 hover:bg-on-primary/5 hover:text-on-primary hover:translate-x-1"
               )}
             >
               <User size={20} />
@@ -93,7 +80,7 @@ export function Sidebar() {
                 "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
                 isActive 
                   ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
-                  : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+                  : "text-on-primary/70 hover:bg-on-primary/5 hover:text-on-primary hover:translate-x-1"
               )}
             >
               <BookOpen size={20} />
@@ -101,14 +88,14 @@ export function Sidebar() {
             </NavLink>
           </>
         )}
-        {(profile.role === 'admin' || profile.role === 'teacher') && (
+        {(profile.role === 'admin' || profile.role === 'faculty') && (
           <NavLink
             to="/grades"
             className={({ isActive }) => cn(
               "flex items-center gap-4 py-4 px-8 transition-all duration-200 border-l-4 border-transparent",
               isActive 
                 ? "bg-secondary text-on-secondary border-secondary shadow-lg shadow-secondary/10" 
-                : "text-on-surface-variant hover:bg-white/5 hover:text-on-surface hover:translate-x-1"
+                : "text-on-primary/70 hover:bg-on-primary/5 hover:text-on-primary hover:translate-x-1"
             )}
           >
             <ClipboardList size={20} />
@@ -118,14 +105,7 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-auto px-6 pb-12 flex flex-col gap-4">
-        <div className="flex items-center justify-center mb-4">
-          <img 
-            src={LOGO_URL} 
-            alt="SIS Branding" 
-            className="h-16 w-auto opacity-40 grayscale group-hover:grayscale-0 hover:opacity-100 transition-all duration-700" 
-          />
-        </div>
-        <button className="w-full flex items-center justify-center gap-2 border border-white/20 text-on-surface py-3 rounded hover:bg-white/5 hover:border-white/40 transition-all font-bold uppercase text-[10px] tracking-widest">
+        <button className="w-full flex items-center justify-center gap-2 border border-on-primary/20 text-on-primary py-3 rounded hover:bg-on-primary/5 hover:border-on-primary/40 transition-all font-bold uppercase text-[10px] tracking-widest">
           <LifeBuoy size={14} />
           Student Support
         </button>

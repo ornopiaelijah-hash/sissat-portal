@@ -7,18 +7,25 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ChevronRight, Shield, Key, CheckCircle, LogOut, User } from 'lucide-react';
 import { useStudent } from '../context/StudentContext';
+import { LOGO_URL } from '../constants';
 
 export default function Settings() {
   const { profile, logout } = useStudent();
 
-  const isFaculty = profile.role === 'teacher' || profile.role === 'admin';
+  const isFaculty = profile.role === 'faculty' || profile.role === 'admin';
 
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
+      className="relative overflow-hidden"
     >
+      {/* Background Faded Logo */}
+      <div className="absolute -right-32 -top-32 opacity-10 rotate-12 select-none pointer-events-none transform scale-150 [mask-image:radial-gradient(circle,black_20%,transparent_70%)] z-0">
+        <img src={LOGO_URL} alt="" className="w-[500px] h-[500px] grayscale brightness-125 contrast-75" />
+      </div>
+
       <header className="mb-16">
         <nav className="flex items-center gap-2 text-on-surface-variant text-[10px] mb-6 uppercase tracking-[0.2em] font-bold">
           <span>Portal</span>
@@ -47,10 +54,10 @@ export default function Settings() {
                 )}
               </div>
               <h2 className="text-2xl font-bold text-on-surface mb-1 font-headline">
-                {profile.role === 'admin' ? 'System Administrator' : profile.role === 'teacher' ? 'Faculty Member' : `${profile.firstName} ${profile.lastName}`}
+                {profile.role === 'admin' ? 'System Administrator' : profile.role === 'faculty' ? 'Faculty Member' : `${profile.fullName || profile.firstName + ' ' + profile.lastName}`}
               </h2>
               <p className="text-secondary text-xs font-bold uppercase tracking-widest mb-6">
-                {profile.role === 'admin' ? 'Administrative Lead' : profile.role === 'teacher' ? 'Instructor' : `${profile.college} • ${profile.class}`}
+                {profile.role === 'admin' ? 'Administrative Lead' : profile.role === 'faculty' ? 'Instructor' : `${profile.college} • ${profile.class}`}
               </p>
               <div className="space-y-4 pt-6 border-t border-white/10">
                 {!isFaculty && (
@@ -74,7 +81,7 @@ export default function Settings() {
               <div className="flex items-center justify-center w-full p-4 rounded-lg bg-secondary/10 border border-secondary/20 text-secondary shadow-lg font-black uppercase text-[10px] tracking-[0.2em]">
                 Admin Access Authorized
               </div>
-            ) : profile.role === 'teacher' ? (
+            ) : profile.role === 'faculty' ? (
               <div className="flex items-center justify-center w-full p-4 rounded-lg bg-secondary/10 border border-secondary/20 text-secondary shadow-lg font-black uppercase text-[10px] tracking-[0.2em]">
                 Faculty ID Verified
               </div>

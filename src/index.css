@@ -4,23 +4,54 @@
  */
 
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Public+Sans:wght@300;400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
 
 @theme {
-  --font-headline: "Noto Serif", serif;
-  --font-sans: "Public Sans", sans-serif;
+  --font-headline: "Manrope", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-serif: "Noto Serif", serif;
+  --font-sans: "Poppins", sans-serif;
   
-  --color-primary: #000a1e;
-  --color-primary-container: #002147;
-  --color-secondary: #ffcc00;
-  --color-secondary-container: #fed488;
-  --color-on-secondary: #000a1e;
-  --color-surface: #000a1e;
-  --color-surface-container: #001b3d;
-  --color-on-surface: #f8f9fa;
-  --color-on-surface-variant: #aec7f6;
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-secondary: var(--secondary);
+  --color-secondary-container: var(--secondary-container);
+  --color-on-secondary: var(--on-secondary);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-primary: var(--on-primary);
   
   --radius-full: 0.75rem;
+}
+
+:root {
+  --primary: #000a1e;
+  --primary-container: #002147;
+  --on-primary: #f8f9fa;
+  --secondary: #ffcc00;
+  --secondary-container: #fed488;
+  --on-secondary: #000a1e;
+  --surface: #000a1e;
+  --surface-container: #001b3d;
+  --on-surface: #f8f9fa;
+  --on-surface-variant: #aec7f6;
+  color-scheme: dark;
+}
+
+:root.light {
+  --primary: #002147;
+  --primary-container: #f0f4f8;
+  --on-primary: #ffffff;
+  --secondary: #ffcc00;
+  --secondary-container: #fef9c3;
+  --on-secondary: #000a1e;
+  --surface: #ffffff;
+  --surface-container: #f8fafc;
+  --on-surface: #000a1e;
+  --on-surface-variant: #475569;
+  color-scheme: light;
 }
 
 .text-stroke-thick {
@@ -44,8 +75,8 @@
 }
 
 .velvet-depth {
-  background: linear-gradient(135deg, #001233 0%, #002147 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-container);
+  border: 1px solid color-mix(in srgb, var(--on-surface) 10%, transparent);
 }
 
 .editorial-shadow {

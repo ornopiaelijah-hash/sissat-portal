@@ -5,6 +5,26 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { StudentProfile, TranscriptEntry } from '../types';
+import { auth, db, handleFirestoreError, OperationType } from '../lib/firebase';
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut,
+  updateProfile as updateAuthProfile
+} from 'firebase/auth';
+import { 
+  doc, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  collection, 
+  onSnapshot, 
+  query, 
+  where,
+  addDoc
+} from 'firebase/firestore';
+import { DEFAULT_SUBJECTS } from '../constants';
 
 interface StudentContextType {
   profile: StudentProfile | null;
@@ -14,17 +34,23 @@ interface StudentContextType {
   isLoadingData: boolean;
   isAuthenticated: boolean;
   isCheckingAuth: boolean;
-  login: (email: string, studentId: string, role?: 'student' | 'teacher' | 'admin') => Promise<boolean>;
-  signup: (email: string, studentId: string, firstName: string, lastName: string) => Promise<boolean>;
+  emailVerified: boolean;
+  sendVerification: () => Promise<void>;
+  login: (email: string, password: string) => Promise<any>;
+  signInWithGoogle: () => Promise<void>;
+  signup: (email: string, password: string, studentId: string | undefined, firstName: string, lastName: string, role?: 'student' | 'faculty' | 'admin', section?: string, college?: string) => Promise<boolean>;
   logout: () => Promise<void>;
   refreshData: () => Promise<void>;
   students: StudentProfile[];
-  updateStudentGrade: (studentId: string, moduleCode: string, newGrade: string) => Promise<void>;
+  updateStudentGrade: (studentId: string, moduleCode: string, gradeUpdates: Partial<TranscriptEntry>) => Promise<void>;
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
 }
 
 const defaultProfile: StudentProfile = {
   firstName: 'Elijah Miguel',
   lastName: 'Ornopia',
+  fullName: 'Elijah Miguel Ornopia',
   email: 'elijahmiguel012207@gmail.com',
   phone: '0970-176-7945',
   language: 'English (US)',
@@ -35,110 +61,234 @@ const defaultProfile: StudentProfile = {
   role: 'student',
 };
 
-const mockStudents: StudentProfile[] = [
-  { firstName: 'John Carlo', lastName: 'Geronio', email: 'john@example.com', phone: '', language: 'English', studentId: '2026-SIS-002', class: '12-JUPITER', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
-  { firstName: 'Benjo Laurence', lastName: 'Silos', email: 'benjo@example.com', phone: '', language: 'English', studentId: '2026-SIS-003', class: '12-MARS', college: 'TVL-ICT', status: 'Active Student', role: 'student' },
-];
+const mockStudents: StudentProfile[] = [];
 
-const defaultGrades: TranscriptEntry[] = [
-  { id: '1', studentId: '2026-SIS-001', module: 'Research 2', code: 'RES 2', instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Paper & Defense', grade: '95' },
-  { id: '2', studentId: '2026-SIS-001', module: "3I's", code: "3IS", instructor: 'Dr. Marlou M. Tangaliin', credits: 1.0, assessment: 'Portfolio', grade: '92' },
-  { id: '3', studentId: '2026-SIS-001', module: 'Entrepreneurship', code: 'ENTREP', instructor: 'Mr. Jash Aiden Cortes III', credits: 1.0, assessment: 'Business Plan', grade: '88' },
-  { id: '4', studentId: '2026-SIS-001', module: 'CSS (NC II)', code: 'ICT-CSS', instructor: 'Mr. Joseph Peter Simeon', credits: 1.0, assessment: 'Practical Exam', grade: '98' },
-  { id: '5', studentId: '2026-SIS-001', module: 'HOPE', code: 'PE', instructor: 'Mr. Arbie Sadsad', credits: 1.0, assessment: 'Skills Test', grade: '90' },
-  { id: '6', studentId: '2026-SIS-001', module: 'Work Immersion', code: 'WI', instructor: 'Mr. Charles Faz Jr.', credits: 1.0, assessment: 'Final Report', grade: '96' },
-];
+const defaultGrades: TranscriptEntry[] = DEFAULT_SUBJECTS.map((subject, idx) => ({
+  id: (idx + 1).toString(),
+  studentId: '',
+  module: subject.module,
+  code: subject.code,
+  instructor: '',
+  credits: 1.0,
+  assessment: 'N/A',
+  grade: 'IP',
+  q1: '', q2: '', q3: '', q4: '',
+  average: 'IP'
+}));
 
 const StudentContext = createContext<StudentContextType | undefined>(undefined);
 
 export function StudentProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<StudentProfile | null>(null);
-  const [grades, setGrades] = useState<TranscriptEntry[]>(defaultGrades);
+  const [grades, setGrades] = useState<TranscriptEntry[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [students, setStudents] = useState<StudentProfile[]>(mockStudents);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark';
+  });
 
   useEffect(() => {
-    // Simulate auth check
-    const checkAuth = () => {
-      const storedUser = localStorage.getItem('southdale_v4_user');
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        setProfile(userData.profile);
-        setIsAuthenticated(true);
-      }
-      
-      const storedGrades = localStorage.getItem('southdale_v4_grades');
-      if (storedGrades) {
-        setGrades(JSON.parse(storedGrades));
-      }
-      
-      setIsCheckingAuth(false);
-      setIsLoadingData(false);
-    };
+    const root = window.document.documentElement;
+    if (theme === 'light') {
+      root.classList.add('light');
+    } else {
+      root.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
-    const timer = setTimeout(checkAuth, 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const signup = async (email: string, studentId: string, firstName: string, lastName: string) => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const newProfile: StudentProfile = {
-      ...defaultProfile,
-      firstName,
-      lastName,
-      email,
-      studentId,
-    };
-    
-    localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: newProfile }));
-    setProfile(newProfile);
-    setIsAuthenticated(true);
-    setIsSaving(false);
-    return true;
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  const login = async (email: string, studentId: string, role?: 'student' | 'teacher' | 'admin') => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // For demo purposes, we accept any non-empty student ID
-    if (studentId) {
-      const storedUser = localStorage.getItem('southdale_user');
-      let finalProfile: StudentProfile;
-
-      if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        finalProfile = {
-          ...userData.profile,
-          role: role || userData.profile.role || 'student'
-        };
+  useEffect(() => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setEmailVerified(user.emailVerified);
+        const profilePath = `profiles/${user.uid}`;
+        try {
+          const profileDoc = await getDoc(doc(db, profilePath));
+          if (profileDoc.exists()) {
+            const profileData = profileDoc.data() as StudentProfile;
+            const profileWithUid = { ...profileData, uid: user.uid };
+            
+            if (user.email === 'elijahmiguel012207@gmail.com' && profileData.role !== 'admin') {
+              profileWithUid.role = 'admin';
+              setProfile(profileWithUid);
+              await updateDoc(doc(db, profilePath), { role: 'admin' });
+            } else {
+              setProfile(profileWithUid);
+            }
+            
+            setIsAuthenticated(true);
+          } else {
+            const newProfile: StudentProfile = {
+              ...defaultProfile,
+              uid: user.uid,
+              firstName: user.displayName?.split(' ')[0] || 'Elijah Miguel',
+              lastName: user.displayName?.split(' ').slice(1).join(' ') || 'Ornopia',
+              fullName: user.displayName || 'Elijah Miguel Ornopia',
+              email: user.email || 'elijahmiguel012207@gmail.com',
+              role: user.email === 'elijahmiguel012207@gmail.com' ? 'admin' : 'student',
+            };
+            await setDoc(doc(db, profilePath), newProfile);
+            setProfile(newProfile);
+            setIsAuthenticated(true);
+          }
+        } catch (error) {
+          handleFirestoreError(error, OperationType.GET, profilePath);
+        }
       } else {
-        finalProfile = {
-          ...defaultProfile,
-          studentId: studentId,
-          role: role || 'student'
-        };
+        setProfile(null);
+        setIsAuthenticated(false);
+        setGrades([]);
       }
+      setIsCheckingAuth(false);
+      setIsLoadingData(false);
+    });
 
-      localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: finalProfile }));
-      setProfile(finalProfile);
-      setIsAuthenticated(true);
+    return () => unsubscribeAuth();
+  }, []);
+
+  // Real-time grades listener
+  useEffect(() => {
+    if (!isAuthenticated || !profile || !profile.role) return;
+
+    const gradesPath = 'grades';
+    const currentUid = auth.currentUser?.uid;
+    if (!currentUid) return;
+
+    const q = (profile.role === 'student') 
+      ? query(collection(db, gradesPath), where('studentId', '==', currentUid))
+      : collection(db, gradesPath);
+    
+    const unsubscribeGrades = onSnapshot(q, (snapshot) => {
+      const dbGrades: TranscriptEntry[] = [];
+      snapshot.forEach((doc) => {
+        dbGrades.push({ id: doc.id, ...doc.data() } as TranscriptEntry);
+      });
+      setGrades(dbGrades);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, gradesPath);
+    });
+
+    return () => unsubscribeGrades();
+  }, [isAuthenticated, profile?.role, profile?.studentId]);
+
+  // Faculty/admin listener for all students
+  useEffect(() => {
+    if (!isAuthenticated || (profile?.role !== 'faculty' && profile?.role !== 'admin')) return;
+
+    const profilesPath = 'profiles';
+    const unsubscribeProfiles = onSnapshot(collection(db, profilesPath), (snapshot) => {
+      const studentData: StudentProfile[] = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data() as StudentProfile;
+        if (data.role === 'student') {
+          studentData.push({ ...data, uid: doc.id });
+        }
+      });
+      const sanitizedMock = mockStudents.map(s => ({ ...s, uid: s.studentId }));
+      setStudents(studentData.length > 0 ? studentData : sanitizedMock);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, profilesPath);
+    });
+
+    return () => unsubscribeProfiles();
+  }, [isAuthenticated, profile?.role]);
+
+  const sendVerification = async () => {
+    if (auth.currentUser) {
+      const { sendEmailVerification } = await import('firebase/auth');
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
+  const signup = async (
+    email: string,
+    password: string,
+    studentId: string | undefined,
+    firstName: string,
+    lastName: string,
+    role?: 'student' | 'faculty' | 'admin',
+    section?: string,
+    college?: string
+  ) => {
+    setIsSaving(true);
+    const normalizedEmail = email.includes('@') ? email : `${email}@southdale.edu.ph`;
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
+      const user = userCredential.user;
+
+      const { sendEmailVerification } = await import('firebase/auth');
+      await sendEmailVerification(user);
+      setEmailVerified(false);
+
+      await updateAuthProfile(user, { displayName: `${firstName} ${lastName}` });
+
+      const newProfile: StudentProfile = {
+        firstName,
+        lastName,
+        fullName: `${firstName} ${lastName}`,
+        email: normalizedEmail,
+        phone: '',
+        language: 'English (US)',
+        studentId: studentId || (role === 'student' ? `SIS-${Date.now().toString().slice(-6)}` : ''),
+        class: section || (role === 'student' ? '12-JUPITER' : ''),
+        college: college || 'TVL-ICT',
+        status: 'Active Student',
+        role: role || 'student',
+      };
+
+      const profilePath = `profiles/${user.uid}`;
+      await setDoc(doc(db, profilePath), newProfile);
+
+      setProfile(newProfile);
       setIsSaving(false);
       return true;
+    } catch (error: any) {
+      setIsSaving(false);
+      console.error('Signup error:', error);
+      throw error;
     }
-    
-    setIsSaving(false);
-    throw new Error("Institutional credential rejected.");
+  };
+
+  const login = async (email: string, password: string) => {
+    setIsSaving(true);
+    const normalizedEmail = email.includes('@') ? email : `${email}@southdale.edu.ph`;
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      const user = userCredential.user;
+
+      const profilePath = `profiles/${user.uid}`;
+      const profileDoc = await getDoc(doc(db, profilePath));
+      
+      if (profileDoc.exists()) {
+        const profileData = profileDoc.data() as StudentProfile;
+        setProfile(profileData);
+        setIsSaving(false);
+        return profileData;
+      } else {
+        throw new Error('Profile not found');
+      }
+    } catch (error: any) {
+      setIsSaving(false);
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    localStorage.removeItem('southdale_v4_user');
+    await signOut(auth);
     setIsAuthenticated(false);
     setProfile(null);
+    setGrades([]);
   };
 
   const refreshData = async () => {
@@ -148,57 +298,58 @@ export function StudentProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProfile = async (updates: Partial<StudentProfile>) => {
+    if (!auth.currentUser) return false;
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
     
-    setProfile(prev => {
-      if (!prev) return null;
-      const updated = { ...prev, ...updates };
-      localStorage.setItem('southdale_v4_user', JSON.stringify({ profile: updated }));
-      return updated;
-    });
-    
-    setIsSaving(false);
-    return true;
+    const profilePath = `profiles/${auth.currentUser.uid}`;
+    try {
+      await updateDoc(doc(db, profilePath), updates);
+      setProfile(prev => prev ? { ...prev, ...updates } : null);
+      setIsSaving(false);
+      return true;
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, profilePath);
+      setIsSaving(false);
+      return false;
+    }
   };
 
-  const updateStudentGrade = async (studentId: string, moduleCode: string, newGrade: string) => {
-    setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 600));
-    
-    setGrades(prev => {
-      let found = false;
-      let updated = prev.map(entry => {
-        if (entry.studentId === studentId && entry.code === moduleCode) {
-          found = true;
-          return { ...entry, grade: newGrade };
-        }
-        return entry;
-      });
+  const signInWithGoogle = async () => {
+    console.warn('Google login disabled');
+  };
 
-      if (!found) {
-        // Only add if it's one of the valid default courses
-        const course = defaultGrades.find(g => g.code === moduleCode);
-        if (course) {
-          const newEntry: TranscriptEntry = {
-            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            studentId,
-            module: course.module,
-            code: moduleCode,
-            instructor: course.instructor,
-            credits: course.credits,
-            assessment: course.assessment,
-            grade: newGrade
-          };
-          updated = [...updated, newEntry];
-        }
-      }
-      
-      localStorage.setItem('southdale_v4_grades', JSON.stringify(updated));
-      return updated;
-    });
+  const updateStudentGrade = async (
+    studentId: string,
+    moduleCode: string,
+    gradeUpdates: Partial<TranscriptEntry>
+  ) => {
+    if (!profile || (profile.role !== 'faculty' && profile.role !== 'admin')) return;
+    setIsSaving(true);
+
+    // ✅ FIX: Use moduleCode directly — NO sanitization so codes match exactly
+    // e.g. "3IS", "ICTCSS", "FB2", "BT34" are all safe for Firestore paths
+    const code = moduleCode;
+    const globalGradesPath = `grades/${studentId}_${code}`;
     
-    setIsSaving(false);
+    try {
+      // Find module name from defaults
+      const course = defaultGrades.find(g => g.code === code);
+
+      const data = {
+        ...gradeUpdates,
+        studentId,
+        code,  // ✅ store exact code so student query matches
+        module: gradeUpdates.module || course?.module || code,
+        instructor: profile.fullName || `${profile.firstName} ${profile.lastName}`,
+        updatedAt: new Date().toISOString()
+      };
+
+      await setDoc(doc(db, globalGradesPath), data, { merge: true });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, globalGradesPath);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -210,12 +361,17 @@ export function StudentProvider({ children }: { children: ReactNode }) {
       isLoadingData,
       isAuthenticated, 
       isCheckingAuth,
+      emailVerified,
+      sendVerification,
       login, 
+      signInWithGoogle,
       signup, 
       logout,
       refreshData,
-      students: mockStudents,
-      updateStudentGrade
+      students,
+      updateStudentGrade,
+      theme,
+      toggleTheme
     }}>
       {children}
     </StudentContext.Provider>
